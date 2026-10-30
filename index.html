@@ -282,6 +282,51 @@
   }
   @media (prefers-reduced-motion: reduce) { .fw-arrow, .bar i { transition: none; } }
 
+  /* ===== 맨 위(헤더): 바다·한라산·해가 있는 제주 풍경 ===== */
+  :root { --hd1: #0b3a5e; --hd2: #0e7490; --hd3: #14b8a6; --hd4: #fcd34d; --sun: rgba(255,214,120,.95); --hill: #0b5d57; --hill2: #0f766e; }
+  html[data-theme="dark"] { --hd1: #050f1a; --hd2: #0b3a5e; --hd3: #0f766e; --hd4: #1e3a5f; --sun: rgba(200,215,255,.8); --hill: #052e2b; --hill2: #064e4a; }
+  @media (prefers-color-scheme: dark) { html:not([data-theme="light"]) { --hd1: #050f1a; --hd2: #0b3a5e; --hd3: #0f766e; --hd4: #1e3a5f; --sun: rgba(200,215,255,.8); --hill: #052e2b; --hill2: #064e4a; } }
+  header { position: relative; overflow: hidden; background: linear-gradient(170deg, var(--hd1) 0%, var(--hd2) 42%, var(--hd3) 72%, var(--hd4) 135%); padding: 30px 16px 92px; }
+  header::before { content: ''; position: absolute; right: 6%; top: -70px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, var(--sun) 0%, rgba(255,190,90,.35) 42%, rgba(255,190,90,0) 70%); animation: glow 6s ease-in-out infinite alternate; }
+  @keyframes glow { to { transform: scale(1.12); opacity: .85; } }
+  header .in { position: relative; z-index: 3; }
+  header h1 { font-size: 2.1rem; text-shadow: 0 2px 14px rgba(0,0,0,.28); letter-spacing: -.5px; }
+  header p { max-width: 640px; text-shadow: 0 1px 8px rgba(0,0,0,.25); }
+  .stat { background: rgba(255,255,255,.18); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.28); }
+  .hero-art { position: absolute; left: 0; right: 0; bottom: -1px; height: 96px; z-index: 2; pointer-events: none; }
+  .hero-art svg { position: absolute; left: 0; bottom: 0; width: 100%; display: block; }
+  .hero-art .hills { height: 96px; }
+  .hero-art .hills path { fill: var(--hill); opacity: .85; }
+  .hero-art .wave { width: 200%; height: 38px; }
+  .hero-art .wave path { fill: var(--bg); }
+  .hero-art .w1 { opacity: .55; animation: wave 14s linear infinite; bottom: 10px; }
+  .hero-art .w2 { animation: wave 9s linear infinite reverse; }
+  @keyframes wave { to { transform: translateX(-50%); } }
+  .hero-art .float { position: absolute; font-size: 1.6rem; opacity: .85; animation: bob 5s ease-in-out infinite alternate; }
+  .hero-art .f1 { left: 8%; bottom: 52px; } .hero-art .f2 { left: 42%; bottom: 58px; animation-delay: -1.5s; font-size: 1.3rem; } .hero-art .f3 { right: 14%; bottom: 56px; animation-delay: -3s; }
+  @keyframes bob { to { transform: translateY(-10px) rotate(8deg); } }
+  @media (prefers-reduced-motion: reduce) { header::before, .hero-art .wave, .hero-art .float { animation: none; } }
+  @media (max-width: 640px) { header { padding: 22px 16px 80px; } header h1 { font-size: 1.6rem; } header::before { width: 200px; height: 200px; right: -30px; } }
+
+  /* ===== 장소 주제 검색칸(왼쪽 절반) + 제주 사진 슬라이드(오른쪽 절반) ===== */
+  .toprow { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; align-items: stretch; }
+  .toprow > .panel { margin-bottom: 0; }
+  .slideshow { position: relative; padding: 0; overflow: hidden; min-height: 300px; background: #0e7490; }
+  .ss-track { position: absolute; inset: 0; }
+  .ss-slide { position: absolute; inset: 0; transform: translateX(100%); display: grid; place-items: center; font-size: 4rem; background: linear-gradient(135deg, var(--c1), var(--c2)); }
+  .ss-slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ss-cap { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; padding: 34px 14px 30px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.6)); pointer-events: none; }
+  .ss-cap b { font-size: 1.1rem; text-shadow: 0 1px 6px rgba(0,0,0,.6); }
+  .ss-cap a { font-size: 0.7rem; color: #fff; opacity: .85; text-decoration: none; pointer-events: auto; text-shadow: 0 1px 4px rgba(0,0,0,.7); }
+  .ss-arrow { position: absolute; top: 50%; z-index: 4; transform: translateY(-50%); width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: rgba(0,0,0,.35); color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer; opacity: 0; transition: opacity .2s; }
+  .ss-arrow.prev { left: 10px; } .ss-arrow.next { right: 10px; }
+  .slideshow:hover .ss-arrow, .slideshow:focus-within .ss-arrow { opacity: 1; }
+  .ss-dots { position: absolute; left: 0; right: 0; bottom: 10px; z-index: 4; display: flex; justify-content: center; gap: 6px; }
+  .ss-dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.55); cursor: pointer; transition: all .25s; }
+  .ss-dots button.on { width: 22px; border-radius: 4px; background: #fff; }
+  @media (hover: none) { .ss-arrow { opacity: .85; } }
+  @media (max-width: 899px) { .toprow { grid-template-columns: 1fr; } .slideshow { min-height: 0; aspect-ratio: 16 / 9; } }
+
   /* 120곳 목록 칸만 따로 스크롤 */
   #cards { overscroll-behavior: contain; }
   @media (min-width: 1000px) {
@@ -312,11 +357,18 @@
     <p>120곳의 제주 역사·문화 장소를 둘러보고 도장을 모아 보세요. 마음에 드는 곳은 찜해서 나만의 코스도 만들 수 있어요.</p>
     <div class="stats" id="stats"></div>
   </div>
+  <div class="hero-art" aria-hidden="true">
+    <span class="float f1">🍊</span><span class="float f2">🌺</span><span class="float f3">🐴</span>
+    <svg class="hills" viewBox="0 0 1200 140" preserveAspectRatio="none"><path d="M0 140 L0 118 C120 108 230 96 330 98 C420 100 470 70 540 58 C585 50 610 22 650 14 C690 22 715 50 760 58 C830 70 900 104 1010 108 C1090 111 1150 114 1200 112 L1200 140 Z"/></svg>
+    <svg class="wave w1" viewBox="0 0 2400 60" preserveAspectRatio="none"><path d="M0 30 C200 0 400 60 600 30 C800 0 1000 60 1200 30 C1400 0 1600 60 1800 30 C2000 0 2200 60 2400 30 L2400 60 L0 60 Z"/></svg>
+    <svg class="wave w2" viewBox="0 0 2400 60" preserveAspectRatio="none"><path d="M0 34 C150 10 450 58 600 34 C750 10 1050 58 1200 34 C1350 10 1650 58 1800 34 C1950 10 2250 58 2400 34 L2400 60 L0 60 Z"/></svg>
+  </div>
 </header>
 
 <main class="loading">
   <div class="boot" id="boot" role="status">제주 역사문화 데이터를 불러오는 중…</div>
-  <section class="panel">
+  <div class="toprow">
+  <section class="panel filters">
     <div class="controls">
       <input type="search" id="q" placeholder="장소명·제목·주제·주소로 검색 (예: 오름, 해녀, 서귀포)">
       <button class="chip" id="favOnlyBtn">♥ 찜한 곳만</button>
@@ -331,6 +383,14 @@
     <div class="label">스탬프</div>
     <div class="chips" id="stampChips"></div>
   </section>
+  <aside class="panel slideshow" id="slideshow" aria-label="제주 사진 슬라이드쇼">
+    <div class="ss-track" id="ssTrack"></div>
+    <div class="ss-cap"><b id="ssCap"></b><a id="ssCredit" target="_blank" rel="noopener" hidden></a></div>
+    <button type="button" class="ss-arrow prev" id="ssPrev" aria-label="이전 사진">‹</button>
+    <button type="button" class="ss-arrow next" id="ssNext" aria-label="다음 사진">›</button>
+    <div class="ss-dots" id="ssDots"></div>
+  </aside>
+  </div>
 
   <div class="split">
   <div class="col-map">

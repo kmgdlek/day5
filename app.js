@@ -782,6 +782,91 @@ function loadDrawerExtras(p) {
 
 loadWidgetWeather();
 setInterval(loadWidgetWeather, 10 * 60 * 1000);
+
+/* ---------- 제주 사진 슬라이드 (2초마다 넘어간다) ---------- */
+(function slideshow() {
+  // [이름, Pixabay 검색어, 사진이 오기 전에 보일 아이콘, 바탕색 1, 바탕색 2]
+  const SLIDES = [
+    ['한라산', 'hallasan mountain jeju', '🏔️', '#0e7490', '#14b8a6'], ['성산일출봉', 'seongsan ilchulbong jeju', '🌅', '#f97316', '#facc15'],
+    ['제주 바다', 'jeju island coast sea', '🌊', '#0369a1', '#38bdf8'], ['오름', 'oreum jeju volcanic cone', '⛰️', '#15803d', '#86efac'],
+    ['주상절리', 'jusangjeolli cliff jeju', '🪨', '#475569', '#94a3b8'], ['감귤', 'jeju tangerine orchard', '🍊', '#ea580c', '#fdba74'],
+    ['해녀', 'haenyeo diver jeju', '🤿', '#1d4ed8', '#60a5fa'], ['돌하르방', 'dolhareubang jeju stone statue', '🗿', '#57534e', '#a8a29e'],
+    ['폭포', 'jeongbang waterfall jeju', '💧', '#0f766e', '#5eead4'],
+  ];
+  const N = SLIDES.length;
+  const track = $('#ssTrack'), dots = $('#ssDots'), cap = $('#ssCap'), credit = $('#ssCredit'), box = $('#slideshow');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let cur = 0, busy = false, hover = false, inView = true, timer = 0;
+
+  const els = SLIDES.map(([, , emoji, c1, c2], i) => {
+    const d = document.createElement('div');
+    d.className = 'ss-slide';
+    d.style.setProperty('--c1', c1);
+    d.style.setProperty('--c2', c2);
+    d.style.transform = i === 0 ? 'translateX(0)' : 'translateX(100%)';
+    d.innerHTML = `<span>${emoji}</span>`;
+    track.append(d);
+    return d;
+  });
+  const meta = SLIDES.map(() => null);
+  const dotEls = SLIDES.map(([name], i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', `${i + 1}번 사진: ${name}`);
+    b.addEventListener('click', () => { go(i, i > cur ? 1 : -1); sync(); });
+    dots.append(b);
+    return b;
+  });
+
+  function showInfo() {
+    cap.textContent = SLIDES[cur][0];
+    const m = meta[cur];
+    credit.hidden = !m;
+    if (m) { credit.href = m.pageURL; credit.textContent = `사진: ${m.user} · Pixabay`; }
+    dotEls.forEach((b, i) => b.classList.toggle('on', i === cur));
+  }
+  function go(to, dir = 1) { // 지금 사진은 옆으로 밀려 나가고, 다음 사진이 들어온다 (끝에서 처음으로도 이어진다)
+    if (busy || to === cur) return;
+    busy = true;
+    const a = els[cur], b = els[to], t = reduce ? 'none' : 'transform .55s ease';
+    b.style.transition = 'none';
+    b.style.transform = `translateX(${100 * dir}%)`;
+    void b.offsetWidth;
+    a.style.transition = t; b.style.transition = t;
+    a.style.transform = `translateX(${-100 * dir}%)`;
+    b.style.transform = 'translateX(0)';
+    cur = to;
+    showInfo();
+    setTimeout(() => { a.style.transition = 'none'; a.style.transform = 'translateX(100%)'; busy = false; }, reduce ? 0 : 600);
+  }
+  const next = () => go((cur + 1) % N, 1);
+  function sync() { // 마우스를 올렸거나, 화면에 안 보이거나, 탭이 숨겨지면 멈춘다
+    clearInterval(timer);
+    timer = 0;
+    if (!hover && inView && !document.hidden) timer = setInterval(next, 2000);
+  }
+  $('#ssNext').addEventListener('click', () => { next(); sync(); });
+  $('#ssPrev').addEventListener('click', () => { go((cur - 1 + N) % N, -1); sync(); });
+  box.addEventListener('mouseenter', () => { hover = true; sync(); });
+  box.addEventListener('mouseleave', () => { hover = false; sync(); });
+  document.addEventListener('visibilitychange', sync);
+  new IntersectionObserver((en) => { inView = en[0].isIntersecting; sync(); }).observe(box);
+
+  // 사진은 Pixabay 에서 받아 와서 빈 아이콘 자리를 채운다 (못 받아도 슬라이드는 그대로 돌아간다)
+  const used = new Set();
+  SLIDES.forEach(([name, q], i) => photoHits(q).then((hits) => {
+    const h = hits.find((x) => !used.has(x.id) && /jeju|hallasan|korea/i.test(x.tags)) || hits.find((x) => !used.has(x.id));
+    if (!h) return;
+    used.add(h.id);
+    const img = new Image();
+    img.alt = `${name} 사진`;
+    img.onload = () => { els[i].append(img); meta[i] = { user: h.user, pageURL: h.pageURL }; if (i === cur) showInfo(); };
+    img.src = h.webformatURL;
+  }).catch(() => {}));
+
+  showInfo();
+  sync();
+})();
 $('#srcNote').textContent = SOURCE === 'supabase' ? '자료: Supabase DB' : '자료: 백업 파일 (Supabase 연결 전)';
 if (window.__WARNING__) console.warn('[/api/places]', window.__WARNING__);
 
