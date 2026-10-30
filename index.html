@@ -261,6 +261,10 @@
   .fw .bar { height: 8px; margin: 6px 0 8px; }
   .fw-wx { font-size: 0.8125rem; color: var(--muted); }
   .fw-wx b { color: var(--h); }
+  .fw-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+  .fw-actions .chip { padding: 5px 4px; font-size: 0.75rem; text-align: center; white-space: nowrap; }
+  .fw-actions .chip[hidden] { display: none; }
+  .fw .sp-note { margin-top: 6px; }
   .fw-panel { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); max-height: 58vh; overflow-y: auto; }
   .fw-panel[hidden] { display: none; }
   .fw-wxlist { margin: 8px 0; font-size: 0.8125rem; color: var(--h); }
@@ -270,7 +274,7 @@
     .fw { right: 8px; width: auto; }
     .fw.open { width: min(300px, calc(100vw - 16px)); }
     .fw:not(.open) .fw-card { padding: 7px 12px; border-radius: 999px; }
-    .fw:not(.open) .fw-name, .fw:not(.open) .bar, .fw:not(.open) .fw-wx, .fw:not(.open) .fw-arrow { display: none; }
+    .fw:not(.open) .fw-name, .fw:not(.open) .bar, .fw:not(.open) .fw-wx, .fw:not(.open) .fw-arrow, .fw:not(.open) .fw-actions, .fw:not(.open) .sp-note { display: none; }
     .fw:not(.open) .fw-line { justify-content: center; }
     .fw:not(.open) .rank { font-size: 1.3rem; }
     .fw:not(.open) .sp-count { text-align: center; font-size: 0.7rem; }
@@ -378,20 +382,20 @@
     </button>
     <div class="bar"><i id="barFill"></i></div>
     <div class="fw-wx" id="fwWx">날씨 불러오는 중…</div>
+    <div class="sp-actions fw-actions">
+      <button class="chip act" id="randBtn">🎲 어디 갈까?</button>
+      <button class="chip" id="exportBtn">⬇ 기록 저장</button>
+      <button class="chip" id="importBtn">⬆ 불러오기</button>
+      <button class="chip" id="resetStamps">↺ 초기화</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+    <div class="sp-note" id="ioMsg" role="status"></div>
     <div class="fw-panel" id="fwPanel" hidden>
       <div class="sp-sub" id="rankSub"></div>
       <div class="sp-sub" id="noteStat"></div>
       <div class="sp-cats" id="spCats"></div>
       <div class="sp-next" id="spNext"></div>
       <div class="fw-wxlist" id="fwWxList"></div>
-      <div class="sp-actions">
-        <button class="chip act" id="randBtn">🎲 오늘 어디 갈까?</button>
-        <button class="chip" id="exportBtn">⬇ 기록 저장</button>
-        <button class="chip" id="importBtn">⬆ 기록 불러오기</button>
-        <button class="chip" id="resetStamps">스탬프 초기화</button>
-        <input type="file" id="importFile" accept="application/json,.json" hidden>
-      </div>
-      <div class="sp-note" id="ioMsg" role="status"></div>
     </div>
   </div>
 </aside>
