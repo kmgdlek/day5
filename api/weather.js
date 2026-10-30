@@ -1,15 +1,7 @@
 // GET /api/weather?lat=33.5&lng=126.5 — Open-Meteo(키가 필요 없는 무료 날씨 API)로 현재 날씨를 조회한다.
 // Day_2 에서 쓴 방식과 같고, 서버 함수가 대신 불러서 10분 동안 캐시해 준다.
+import { describe } from '../server/wmo.js'
 
-// 날씨 코드(WMO) → 아이콘 · 글자
-function describe(code) {
-  if (code >= 95) return { icon: '⛈️', label: '뇌우' }
-  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return { icon: '🌧️', label: '비' }
-  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return { icon: '❄️', label: '눈' }
-  if (code === 45 || code === 48) return { icon: '🌫️', label: '안개' }
-  if (code === 0 || code === 1) return { icon: '☀️', label: '맑음' }
-  return { icon: '⛅', label: code === 2 ? '구름 조금' : '흐림' }
-}
 
 export default async function handler(req, res) {
   const lat = Number(req.query.lat)

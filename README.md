@@ -6,7 +6,8 @@
 브라우저(index.html + app.js)
    ├─ GET /api/places   → Supabase DB (jeju_location + jeju_general 을 합친 뷰)
    ├─ GET /api/photos   → Pixabay 사진 검색
-   └─ GET /api/weather  → Open-Meteo 현재 날씨 (키 필요 없음)
+   ├─ GET /api/weather  → Open-Meteo 현재 날씨 (키 필요 없음)
+   └─ GET /api/forecast → Open-Meteo 내일부터 7일 예보 (키 필요 없음)
 ```
 
 날씨(Open-Meteo)는 **키가 필요 없습니다.** 나머지 비밀 키는 모두 **서버 함수(`api/*.js`)에서만** 쓰고, 브라우저에는 내려가지 않습니다.

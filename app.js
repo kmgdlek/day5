@@ -752,7 +752,9 @@ function loadDrawerExtras(p) {
   let cur = null, raf = 0, last = 0;
   const targetY = () => { // 화면 세로 가운데. 머리글 아래 ~ 문서 끝 사이로 제한
     const want = window.scrollY + (innerHeight - fw.offsetHeight) / 2;
-    const min = header.offsetHeight + 10;
+    // 넓은 화면에서는 맨 위 3칸(검색·슬라이드·예보)을 가리지 않도록 그 아래에서부터 따라온다
+    const row = document.querySelector('.toprow');
+    const min = (innerWidth >= 700 && row ? row.offsetTop + row.offsetHeight : header.offsetHeight) + 10;
     const max = Math.max(min, document.documentElement.scrollHeight - fw.offsetHeight - 10);
     return Math.max(min, Math.min(max, want));
   };
@@ -866,6 +868,42 @@ setInterval(loadWidgetWeather, 10 * 60 * 1000);
 
   showInfo();
   sync();
+})();
+
+/* ---------- 앞으로 7일 날씨: 내일부터 (Open-Meteo · /api/forecast) ---------- */
+(function forecast() {
+  const list = $('#fcList'), sub = $('#fcSub'), tabs = [...document.querySelectorAll('.fc-tabs button')];
+  const cache = new Map();
+  let want = 0;
+  async function load(i) {
+    want = i;
+    const [name, lat, lng] = WX_SPOTS[i];
+    tabs.forEach((b, k) => b.classList.toggle('on', k === i));
+    list.innerHTML = '<li class="fc-load">불러오는 중…</li>';
+    try {
+      let c = cache.get(i);
+      if (!c || Date.now() - c.t > 30 * 60 * 1000) {
+        const r = await fetch(`/api/forecast?lat=${lat}&lng=${lng}`);
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(j.error || `예보 API 오류 (${r.status})`);
+        c = { t: Date.now(), days: j.days };
+        cache.set(i, c);
+      }
+      if (want !== i) return; // 그 사이 다른 탭을 눌렀으면 그 결과만 보여 준다
+      list.innerHTML = c.days.map((x, n) => `
+        <li class="${x.rain != null && x.rain >= 60 ? 'wet' : ''}">
+          <span class="fc-day"><b>${n === 0 ? '내일' : esc(x.weekday)}</b><small>${esc(x.md)}${n === 0 ? ' (' + esc(x.weekday) + ')' : ''}</small></span>
+          <span class="fc-ic" title="${esc(x.label)}">${x.icon}</span>
+          <span class="fc-t"><b>${x.max}°</b><i>${x.min}°</i></span>
+          <span class="fc-rain" title="비 올 확률">${x.rain == null ? '' : '💧' + x.rain + '%'}</span>
+        </li>`).join('');
+      sub.textContent = `${name} · 내일부터 7일 · Open-Meteo 예상`;
+    } catch (e) {
+      if (want === i) list.innerHTML = `<li class="fc-load">예보를 불러오지 못했어요<br><small>${esc(e.message)}</small></li>`;
+    }
+  }
+  tabs.forEach((b, k) => b.addEventListener('click', () => load(k)));
+  load(0);
 })();
 $('#srcNote').textContent = SOURCE === 'supabase' ? '자료: Supabase DB' : '자료: 백업 파일 (Supabase 연결 전)';
 if (window.__WARNING__) console.warn('[/api/places]', window.__WARNING__);
