@@ -6,16 +6,15 @@
 브라우저(index.html + app.js)
    ├─ GET /api/places   → Supabase DB (jeju_location + jeju_general 을 합친 뷰)
    ├─ GET /api/photos   → Pixabay 사진 검색
-   └─ GET /api/weather  → 기상청 초단기실황 (좌표 → 격자 변환)
+   └─ GET /api/weather  → Open-Meteo 현재 날씨 (키 필요 없음)
 ```
 
-비밀 키는 모두 **서버 함수(`api/*.js`)에서만** 쓰고, 브라우저에는 내려가지 않습니다.
+날씨(Open-Meteo)는 **키가 필요 없습니다.** 나머지 비밀 키는 모두 **서버 함수(`api/*.js`)에서만** 쓰고, 브라우저에는 내려가지 않습니다.
 
 ## 1. 환경변수
 
 | 이름 | 용도 | 어디서 얻나 |
 |---|---|---|
-| `WEATHER_API_KEY` | 기상청 날씨 | 공공데이터포털 → 마이페이지 → 일반 인증키 |
 | `PIXABAY_API_KEY` | 사진 검색 | https://pixabay.com/api/docs/ |
 | `SUPABASE_URL` | DB 주소 | Supabase → Project Settings → API |
 | `SUPABASE_ANON_KEY` | DB 읽기 키(읽기 전용) | 같은 곳의 anon / publishable key |
@@ -59,7 +58,7 @@ git push -u origin main
 ```
 
 1. Vercel → Add New Project → GitHub 의 `day5` 저장소 선택 (Framework Preset: **Other**, Build Command 비움)
-2. Environment Variables 4개 등록 후 Deploy
+2. Environment Variables 3개(`PIXABAY_API_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`) 등록 후 Deploy
 3. **시크릿 창**(`Cmd + Shift + N`)에서 Vercel 링크를 열어 확인: 목록, 3D 지도, 날씨, 사진이 보이면 성공
 
 ## 5. 키가 올라가지 않았는지 확인

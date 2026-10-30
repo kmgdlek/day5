@@ -708,8 +708,7 @@ function hydratePhotos() { // 화면에 보이는 카드만 사진을 불러온�
   document.querySelectorAll('.thumb.ph').forEach((el) => thumbIO.observe(el));
 }
 
-/* ---------- 날씨 (기상청 · /api/weather) ---------- */
-const PTY_TXT = { 0: '강수 없음', 1: '비', 2: '비/눈', 3: '눈', 5: '빗방울', 6: '빗방울/눈날림', 7: '눈날림' };
+/* ---------- 날씨 (Open-Meteo · /api/weather) ---------- */
 const wxCache = new Map();
 async function fetchWeather(lat, lng) {
   const key = `${lat.toFixed(2)},${lng.toFixed(2)}`;
@@ -721,17 +720,17 @@ async function fetchWeather(lat, lng) {
   wxCache.set(key, { t: Date.now(), data: d });
   return d;
 }
-const wxIcon = (d) => ({ 1: '🌧️', 2: '🌨️', 3: '❄️', 5: '🌦️', 6: '🌨️', 7: '❄️' }[d.precipType] || (d.temperature >= 28 ? '🌞' : d.temperature <= 5 ? '🥶' : '🌤️'));
-const wxLine = (d) => `${wxIcon(d)} <b>${d.temperature}℃</b> · 습도 ${d.humidity}% · 바람 ${d.windSpeed}m/s · ${PTY_TXT[d.precipType] ?? '-'}`;
+const wxIcon = (d) => d.icon;
+const wxLine = (d) => `${d.icon} <b>${d.temperature}℃</b> · ${esc(d.label)} · 습도 ${d.humidity}% · 바람 ${d.windSpeed}m/s`;
 const WX_SPOTS = [['제주시', 33.4996, 126.5312], ['서귀포', 33.2541, 126.5601]];
 async function loadWidgetWeather() {
   const rows = await Promise.all(WX_SPOTS.map(async ([name, lat, lng]) => {
     try { return [name, await fetchWeather(lat, lng)]; } catch (e) { return [name, null, e.message]; }
   }));
   const ok = rows.find((r) => r[1]);
-  $('#fwWx').innerHTML = ok ? `${wxIcon(ok[1])} ${esc(ok[0])} <b>${ok[1].temperature}℃</b> · ${esc(PTY_TXT[ok[1].precipType] ?? '')}` : '날씨를 불러오지 못했어요';
+  $('#fwWx').innerHTML = ok ? `${wxIcon(ok[1])} ${esc(ok[0])} <b>${ok[1].temperature}℃</b> · ${esc(ok[1].label)}` : '날씨를 불러오지 못했어요';
   $('#fwWxList').innerHTML = rows.map(([n, d, err]) => `<div class="wxrow"><span>${esc(n)}</span>${d ? wxLine(d) : esc('불러오지 못했어요: ' + err)}</div>`).join('') +
-    (ok ? `<div class="sp-note">기상청 관측 ${esc(ok[1].observedAt)} 기준</div>` : '');
+    (ok ? `<div class="sp-note">Open-Meteo ${esc(ok[1].observedAt)} 기준</div>` : '');
 }
 
 /* ---------- 상세 화면의 사진 · 날씨 ---------- */
@@ -742,7 +741,7 @@ function loadDrawerExtras(p) {
     hero.insertAdjacentHTML('beforeend', `<img src="${esc(m.url)}" alt="${esc(p.name)} 관련 사진"><a class="credit" href="${esc(m.pageURL)}" target="_blank" rel="noopener">사진: ${esc(m.user)} · Pixabay</a>`);
   });
   fetchWeather(p.lat, p.lng).then((d) => {
-    if (box.isConnected) box.innerHTML = `${wxLine(d)}<small>기상청 관측 ${esc(d.observedAt)} · 격자 (${d.nx}, ${d.ny})</small>`;
+    if (box.isConnected) box.innerHTML = `${wxLine(d)}<small>Open-Meteo · ${esc(d.observedAt)} 기준</small>`;
   }).catch((e) => { if (box.isConnected) box.textContent = '날씨를 불러오지 못했어요: ' + e.message; });
 }
 
