@@ -65,6 +65,8 @@ function renderStats() {
     `<span class="stat"><b>${countBy('d1').length}</b>주제 구분</span>`;
 }
 function renderChips() {
+  const activeFilters = [state.cat, state.d1, state.city, state.sub, state.stampF].filter(Boolean).length;
+  $('#filterBadge').textContent = activeFilters ? `${activeFilters}개 적용 중` : '';
   const mk = (label, n, on, attrs, extra = '') =>
     `<button class="chip ${extra} ${on ? 'on' : ''}" ${attrs}>${esc(label)}${n != null ? `<small>${n}</small>` : ''}</button>`;
   $('#catChips').innerHTML =
@@ -628,6 +630,11 @@ document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('clic
 $('#spinBtn').addEventListener('click', () => { prefs.spin = !prefs.spin; savePrefs(); if (map3d) map3d.setSpin(prefs.spin); applyView(); });
 $('#resetCam').addEventListener('click', () => { if (map3d) map3d.resetView(); });
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (map3d) map3d.retheme(); });
+
+/* 폰·태블릿에서는 필터 칩을 접어 두어, 검색창 바로 아래에 검색 결과가 보이게 한다 */
+const filterMore = document.getElementById('filterMore'), narrowMq = matchMedia('(max-width: 999px)');
+filterMore.open = !narrowMq.matches;
+narrowMq.addEventListener('change', (e) => { filterMore.open = !e.matches; });
 
 /* ---------- 사진 (Pixabay · /api/photos) ---------- */
 // 장소 이름/주제에 맞는 영어 검색어를 고른다 (위에서부터 먼저 맞는 규칙이 쓰인다)

@@ -230,6 +230,25 @@
     a, button { -webkit-tap-highlight-color: transparent; }
   }
 
+  /* ===== 폰·태블릿: 검색창 바로 아래에 검색 결과가 오게 한다 ===== */
+  .filter-more > summary { display: none; }
+  @media (max-width: 999px) {
+    .filter-more > summary { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--h); font-size: 0.875rem; cursor: pointer; list-style: none; }
+    .filter-more > summary::-webkit-details-marker { display: none; }
+    .filter-more > summary::after { content: '▾'; color: var(--muted); transition: transform .2s; }
+    .filter-more[open] > summary::after { transform: rotate(180deg); }
+    #filterBadge:not(:empty) { font-size: 0.75rem; padding: 0 8px; border-radius: 999px; background: var(--accent); color: #fff; }
+    main { display: flex; flex-direction: column; }
+    main .toprow, main .split { display: contents; }
+    main .toprow > .panel { margin-bottom: 16px; }
+    main > .boot { order: 0; }
+    main > section.panel, main .toprow > .filters { order: 1; }
+    main .col-list { order: 2; margin-bottom: 16px; }
+    main #slideshow { order: 3; }
+    main #forecast { order: 4; }
+    main .col-map { order: 5; }
+  }
+
   /* ===== 2단계: 불러오기 · 사진 · 날씨 · 천천히 따라오는 스탬프 칸 ===== */
   main.loading > :not(.boot) { display: none; }
   .boot { text-align: center; padding: 56px 16px; color: var(--muted); }
@@ -419,6 +438,8 @@
       <input type="search" id="q" placeholder="장소명·제목·주제·주소로 검색 (예: 오름, 해녀, 서귀포)">
       <button class="chip" id="favOnlyBtn">♥ 찜한 곳만</button>
     </div>
+    <details class="filter-more" id="filterMore" open>
+    <summary>🔎 필터 <span id="filterBadge"></span></summary>
     <div class="label">분류</div>
     <div class="chips cat" id="catChips"></div>
     <div class="label">주제 구분</div>
@@ -428,6 +449,7 @@
     <select id="subSel" aria-label="읍·면·동 선택"></select>
     <div class="label">스탬프</div>
     <div class="chips" id="stampChips"></div>
+    </details>
   </section>
   <aside class="panel slideshow" id="slideshow" aria-label="제주 사진 슬라이드쇼">
     <div class="ss-track" id="ssTrack"></div>
