@@ -379,6 +379,16 @@
     header .in { max-width: 1556px; }
     main { max-width: 1556px; }
   }
+
+  /* 검색 결과(목록)를 검색칸 바로 아래 왼쪽에, 지도는 오른쪽에 둔다 → 검색 결과가 대각선으로 멀리 있지 않다 */
+  @media (min-width: 1000px) {
+    .split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .col-list { order: -1; }
+  }
+  /* 위쪽 3칸(검색 | 슬라이드 | 예보)과 아래쪽 2칸(목록 | 지도)의 경계선이 같은 세로줄에 놓이게 맞춘다 */
+  @media (min-width: 1300px) {
+    .split { grid-template-columns: calc((100% - 32px) / 2) minmax(0, 1fr); }
+  }
 </style>
 </head>
 <body>
