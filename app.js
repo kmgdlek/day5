@@ -752,9 +752,7 @@ function loadDrawerExtras(p) {
   let cur = null, raf = 0, last = 0;
   const targetY = () => { // 화면 세로 가운데. 머리글 아래 ~ 문서 끝 사이로 제한
     const want = window.scrollY + (innerHeight - fw.offsetHeight) / 2;
-    // 넓은 화면에서는 맨 위 3칸(검색·슬라이드·예보)을 가리지 않도록 그 아래에서부터 따라온다
-    const row = document.querySelector('.toprow');
-    const min = (innerWidth >= 700 && row ? row.offsetTop + row.offsetHeight : header.offsetHeight) + 10;
+    const min = header.offsetHeight + 10;
     const max = Math.max(min, document.documentElement.scrollHeight - fw.offsetHeight - 10);
     return Math.max(min, Math.min(max, want));
   };

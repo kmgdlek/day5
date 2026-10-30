@@ -251,7 +251,7 @@
 
   /* 오른쪽 가운데에서 스크롤을 천천히 따라오는 작은 스탬프 칸 */
   .fw { position: absolute; top: 0; right: 12px; z-index: 8; width: 212px; will-change: transform; }
-  .fw.open { width: 300px; }
+  .fw.open { width: 224px; } /* 펼쳐도 오른쪽 빈 줄(236px) 안에 들어가게 */
   .fw-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.18); padding: 10px 12px; }
   .fw-head { display: block; width: 100%; padding: 0; border: 0; background: none; font: inherit; color: var(--h); text-align: left; cursor: pointer; }
   .fw-line { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
@@ -349,7 +349,7 @@
   .fc-list li.wet .fc-rain { color: #2563eb; font-weight: 700; }
   html[data-theme="dark"] .fc-t b { color: #f87171; } html[data-theme="dark"] .fc-t i, html[data-theme="dark"] .fc-list li.wet .fc-rain { color: #60a5fa; }
   @media (prefers-color-scheme: dark) { html:not([data-theme="light"]) .fc-t b { color: #f87171; } html:not([data-theme="light"]) .fc-t i, html:not([data-theme="light"]) .fc-list li.wet .fc-rain { color: #60a5fa; } }
-  @media (max-width: 1099px) { .toprow { grid-template-columns: 1fr 1fr; } .toprow .filters { grid-column: 1 / -1; } .slideshow { min-height: 340px; } }
+  @media (max-width: 1299px) { .toprow { grid-template-columns: 1fr 1fr; } .toprow .filters { grid-column: 1 / -1; } .slideshow { min-height: 340px; } }
   @media (max-width: 640px) { .toprow { grid-template-columns: 1fr; } .slideshow { min-height: 0; aspect-ratio: 16 / 9; } }
 
   /* 120곳 목록 칸만 따로 스크롤 */
@@ -368,6 +368,17 @@
     #cards { max-height: 72vh; overflow-y: auto; padding-right: 2px; }
   }
   @media (max-width: 640px) { .map3d { aspect-ratio: 1 / 1; } }
+
+  /* 스탬프 칸이 지나가는 오른쪽 줄(236px)은 빈칸으로 비워 둔다 → 내용이 가려지지 않는다 */
+  @media (min-width: 641px) {
+    header .in { max-width: 1336px; padding-right: 236px; }
+    main { max-width: 1336px; padding-right: 252px; }
+    footer { padding-right: 236px; }
+  }
+  @media (min-width: 1000px) {
+    header .in { max-width: 1556px; }
+    main { max-width: 1556px; }
+  }
 </style>
 </head>
 <body>
